@@ -1,0 +1,75 @@
+from machine import Pin;
+from time import sleep;
+import network, BlynkLib
+
+led1 = Pin(23, Pin.OUT);
+led2 = Pin(19, Pin.OUT);
+led3 = Pin(0, Pin.OUT);
+led1state = 0
+led2state = 0
+led3state = 0
+
+ssid = 'Wokwi-GUEST'
+password = ''
+
+def connect_wifi(ssid, password):
+  #Connect to your network
+  station = network.WLAN(network.STA_IF)
+  station.active(True)
+  station.connect(ssid, password)
+  while station.isconnected() == False:
+    pass
+  print('Connection successful')
+  print(station.ifconfig())
+
+connect_wifi(ssid,password)
+
+BLYNK_AUTH = 'nsibzqJ9_GlcbKpqRa6Vo_HOb_k4soFX'
+
+blynk = BlynkLib.Blynk(BLYNK_AUTH)
+
+@blynk.on("connected")
+def blynk_connected(ping):
+    print("Connecting.................")
+    print('Blynk ready. Ping:', ping, 'ms')
+    print("Connected!")
+
+    while True:
+        led1.on()
+        led1state = 1
+        blynk.virtual_write(0, led1state)
+        print(led1state)
+        sleep(2);
+
+        led1.off();
+        led1state = 0 
+        blynk.virtual_write(0, led1state)
+        sleep(2)
+
+
+        led2.on()
+        led2state = 1
+        blynk.virtual_write(1, led2state)
+        sleep(2);
+
+        led2.off();
+        led2state = 0 
+        blynk.virtual_write(1, led2state)
+        sleep(2)
+
+
+        led3.on()
+        led3state = 1
+        blynk.virtual_write(2, led3state)
+        sleep(2);
+
+        led3.off();
+        led3state = 0 
+        blynk.virtual_write(2, led3state)
+        sleep(2)
+
+
+while True:
+    blynk.run()
+
+    
